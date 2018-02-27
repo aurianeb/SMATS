@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<edges xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/edges_file.xsd">
+    <edge id="A80" from="8" to="0" type="a"/>
+    <edge id="A08" from="0" to="8" type="a"/>
+    <edge id="A01" from="0" to="1" type="a"/>
+    <edge id="A10" from="1" to="0" type="a"/>
+    <edge id="A12" from="1" to="2" type="a"/>
+    <edge id="A21" from="2" to="1" type="a"/>
+    <edge id="A23" from="2" to="3" type="a"/>
+    <edge id="A32" from="3" to="2" type="a"/>
+    <edge id="A34" from="3" to="4" type="a"/>
+    <edge id="A43" from="4" to="3" type="a"/>
+    <edge id="A45" from="4" to="5" type="a"/>
+    <edge id="A54" from="5" to="4" type="a"/>
+    <edge id="A56" from="5" to="6" type="a"/>
+    <edge id="A65" from="6" to="5" type="a"/>
+    <edge id="A67" from="6" to="7" type="a"/>
+    <edge id="A76" from="7" to="6" type="a"/>
+    <edge id="A79" from="7" to="9" type="a"/>
+    <edge id="A97" from="9" to="7" type="a"/>
+
+    <edge id="m1i" from="10" to="0" type="b"/>
+    <edge id="m1o" from="0" to="10" type="b"/>
+    <edge id="m2i" from="11" to="1" type="b"/>
+    <edge id="m2o" from="1" to="11" type="b"/>
+    <edge id="m3i" from="12" to="2" type="b"/>
+    <edge id="m3o" from="2" to="12" type="b"/>
+    <edge id="m4i" from="13" to="3" type="b"/>
+    <edge id="m4o" from="3" to="13" type="b"/>
+    <edge id="m5i" from="14" to="4" type="b"/>
+    <edge id="m5o" from="4" to="14" type="b"/>
+    <edge id="m6i" from="15" to="5" type="b"/>
+    <edge id="m6o" from="5" to="15" type="b"/>
+    <edge id="m7i" from="16" to="6" type="b"/>
+    <edge id="m7o" from="6" to="16" type="b"/>
+    <edge id="m8i" from="17" to="7" type="b"/>
+    <edge id="m8o" from="7" to="17" type="b"/>
+    <edge id="m9i" from="18" to="0" type="b"/>
+    <edge id="m9o" from="0" to="18" type="b"/>
+    <edge id="m10i" from="19" to="1" type="b"/>
+    <edge id="m10o" from="1" to="19" type="b"/>
+    <edge id="m11i" from="20" to="2" type="b"/>
+    <edge id="m11o" from="2" to="20" type="b"/>
+    <edge id="m12i" from="21" to="3" type="b"/>
+    <edge id="m12o" from="3" to="21" type="b"/>
+    <edge id="m13i" from="22" to="4" type="b"/>
+    <edge id="m13o" from="4" to="22" type="b"/>
+    <edge id="m14i" from="23" to="5" type="b"/>
+    <edge id="m14o" from="5" to="23" type="b"/>
+    <edge id="m15i" from="24" to="6" type="b"/>
+    <edge id="m15o" from="6" to="24" type="b"/>
+    <edge id="m16i" from="25" to="7" type="b"/>
+    <edge id="m16o" from="7" to="25" type="b"/>
+
+</edges>
