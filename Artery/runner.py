@@ -46,7 +46,7 @@ def generate_routefile():
     random.seed(42)  # make tests reproducible
     N = 3600  # number of time steps
     # demand per second from different directions
-    thresh = 10
+    thresh = 5.0 / 10
     with open("quickstart.rou.xml", "w") as routes:
         print("""<routes>
         <vType id="typeWE" accel="0.8" decel="4.5" sigma="0.5" length="5" minGap="2.5" maxSpeed="16.67" guiShape="passenger"/>
@@ -56,17 +56,12 @@ def generate_routefile():
         <route id="right" edges="A12 m9o" />""", file=routes)
         lastVeh = 0
         vehNr = 0
-        for i in range(N):
-            if random.uniform(0, 1) < thresh:
-                print('    <vehicle id="straight_%i" type="typeWE" route="straight" depart="%i" />' % (
+        for i in range(100):
+            departure_time = 3600 * random.uniform(0, 1)
+            print('    <vehicle id="straight_%i" type="typeWE" route="straight" depart="%i" />' % (
                     vehNr, i), file=routes)
-                vehNr += 1
-                lastVeh = i
-            if random.uniform(0, 1) >= thresh:
-                print('    <vehicle id="right_%i" type="typeWE" route="right" depart="%i" />' % (
-                    vehNr, i), file=routes)
-                vehNr += 1
-                lastVeh = i
+            vehNr += 1
+            lastVeh = i
         print("</routes>", file=routes)
 
 # The program looks like this
