@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<tazs xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/taz_file.xsd">
+    <taz id="8">
+        <tazSource id="A80" weight="1"/>
+        <tazSink id="A08" weight="1"/>
+    </taz>
+    <taz id="9">
+        <tazSource id="A97" weight="1"/>
+        <tazSink id="A79" weight="1"/>
+    </taz>
+    <taz id="10">
+        <tazSource id="m1i" weight="1"/>
+        <tazSink id="m1o" weight="1"/>
+    </taz>
+    <taz id="11">
+        <tazSource id="m2i" weight="1"/>
+        <tazSink id="m2o" weight="1"/>
+    </taz>
+    <taz id="12">
+        <tazSource id="m3i" weight="1"/>
+        <tazSink id="m3o" weight="1"/>
+    </taz>
+    <taz id="13">
+        <tazSource id="m4i" weight="1"/>
+        <tazSink id="m4o" weight="1"/>
+    </taz>
+    <taz id="14">
+        <tazSource id="m5i" weight="1"/>
+        <tazSink id="m5o" weight="1"/>
+    </taz>
+    <taz id="15">
+        <tazSource id="m6i" weight="1"/>
+        <tazSink id="m6o" weight="1"/>
+    </taz>
+    <taz id="16">
+        <tazSource id="m7i" weight="1"/>
+        <tazSink id="m7o" weight="1"/>
+    </taz>
+    <taz id="17">
+        <tazSource id="m8i" weight="1"/>
+        <tazSink id="m8o" weight="1"/>
+    </taz>
+    <taz id="18">
+        <tazSource id="m9i" weight="1"/>
+        <tazSink id="m9o" weight="1"/>
+    </taz>
+    <taz id="19">
+        <tazSource id="m10i" weight="1"/>
+        <tazSink id="m10o" weight="1"/>
+    </taz>
+    <taz id="20">
+        <tazSource id="m11i" weight="1"/>
+        <tazSink id="m11o" weight="1"/>
+    </taz>
+    <taz id="21">
+        <tazSource id="m12i" weight="1"/>
+        <tazSink id="m12o" weight="1"/>
+    </taz>
+    <taz id="22">
+        <tazSource id="m13i" weight="1"/>
+        <tazSink id="m13o" weight="1"/>
+    </taz>
+    <taz id="23">
+        <tazSource id="m14i" weight="1"/>
+        <tazSink id="m14o" weight="1"/>
+    </taz>
+    <taz id="24">
+        <tazSource id="m15i" weight="1"/>
+        <tazSink id="m15o" weight="1"/>
+    </taz>
+    <taz id="25">
+        <tazSource id="m16i" weight="1"/>
+        <tazSink id="m16o" weight="1"/>
+    </taz>
+</tazs>
+
