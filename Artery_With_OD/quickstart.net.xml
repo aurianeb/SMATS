@@ -652,84 +652,100 @@
     </edge>
 
     <tlLogic id="0" type="static" programID="0" offset="0">
-        <phase duration="29" state="srrGGGgsrrGGGg"/>
-        <phase duration="5" state="srryyygsrryyyg"/>
-        <phase duration="6" state="srrsrrGsrrsrrG"/>
-        <phase duration="5" state="srrsrrysrrsrry"/>
-        <phase duration="29" state="GGgsrrrGGgsrrr"/>
-        <phase duration="5" state="yygsrrryygsrrr"/>
-        <phase duration="6" state="srGsrrrsrGsrrr"/>
-        <phase duration="5" state="srysrrrsrysrrr"/>
+                <phase duration="20" state="GGgsrrrGGgsrrr"/>
+        <phase duration="3" state="yygsrrrGGgsrrr"/>
+        <phase duration="0" state="srrGGGgGGgsrrr"/>
+        <phase duration="3" state="GGgsrrryygsrrr"/>
+        <phase duration="47" state="srrGGGgsrrGGGg"/>
+        <phase duration="3" state="GGgyyygsrrGGGg"/>
+        <phase duration="0" state="GGgsrrrsrrGGGg"/>
+        <phase duration="3" state="GGgsrrrsrryyyy"/>
+        <phase duration="17" state="GGgsrrrGGgsrrr"/>
+
     </tlLogic>
     <tlLogic id="1" type="static" programID="0" offset="0">
-        <phase duration="29" state="srrGGGgsrrGGGg"/>
-        <phase duration="5" state="srryyygsrryyyg"/>
-        <phase duration="6" state="srrsrrGsrrsrrG"/>
-        <phase duration="5" state="srrsrrysrrsrry"/>
-        <phase duration="29" state="GGgsrrrGGgsrrr"/>
-        <phase duration="5" state="yygsrrryygsrrr"/>
-        <phase duration="6" state="srGsrrrsrGsrrr"/>
-        <phase duration="5" state="srysrrrsrysrrr"/>
+                <phase duration="20" state="GGgsrrrGGgsrrr"/>
+        <phase duration="3" state="yygsrrrGGgsrrr"/>
+        <phase duration="0" state="srrGGGgGGgsrrr"/>
+        <phase duration="3" state="GGgsrrryygsrrr"/>
+        <phase duration="47" state="srrGGGgsrrGGGg"/>
+        <phase duration="3" state="GGgyyygsrrGGGg"/>
+        <phase duration="0" state="GGgsrrrsrrGGGg"/>
+        <phase duration="3" state="GGgsrrrsrryyyy"/>
+        <phase duration="17" state="GGgsrrrGGgsrrr"/>
+
     </tlLogic>
     <tlLogic id="2" type="static" programID="0" offset="0">
-        <phase duration="29" state="srrGGGgsrrGGGg"/>
-        <phase duration="5" state="srryyygsrryyyg"/>
-        <phase duration="6" state="srrsrrGsrrsrrG"/>
-        <phase duration="5" state="srrsrrysrrsrry"/>
-        <phase duration="29" state="GGgsrrrGGgsrrr"/>
-        <phase duration="5" state="yygsrrryygsrrr"/>
-        <phase duration="6" state="srGsrrrsrGsrrr"/>
-        <phase duration="5" state="srysrrrsrysrrr"/>
+                <phase duration="20" state="GGgsrrrGGgsrrr"/>
+        <phase duration="3" state="yygsrrrGGgsrrr"/>
+        <phase duration="0" state="srrGGGgGGgsrrr"/>
+        <phase duration="3" state="GGgsrrryygsrrr"/>
+        <phase duration="47" state="srrGGGgsrrGGGg"/>
+        <phase duration="3" state="GGgyyygsrrGGGg"/>
+        <phase duration="0" state="GGgsrrrsrrGGGg"/>
+        <phase duration="3" state="GGgsrrrsrryyyy"/>
+        <phase duration="17" state="GGgsrrrGGgsrrr"/>
+
     </tlLogic>
     <tlLogic id="3" type="static" programID="0" offset="0">
-        <phase duration="29" state="srrGGGgsrrGGGg"/>
-        <phase duration="5" state="srryyygsrryyyg"/>
-        <phase duration="6" state="srrsrrGsrrsrrG"/>
-        <phase duration="5" state="srrsrrysrrsrry"/>
-        <phase duration="29" state="GGgsrrrGGgsrrr"/>
-        <phase duration="5" state="yygsrrryygsrrr"/>
-        <phase duration="6" state="srGsrrrsrGsrrr"/>
-        <phase duration="5" state="srysrrrsrysrrr"/>
+                <phase duration="20" state="GGgsrrrGGgsrrr"/>
+        <phase duration="3" state="yygsrrrGGgsrrr"/>
+        <phase duration="0" state="srrGGGgGGgsrrr"/>
+        <phase duration="3" state="GGgsrrryygsrrr"/>
+        <phase duration="47" state="srrGGGgsrrGGGg"/>
+        <phase duration="3" state="GGgyyygsrrGGGg"/>
+        <phase duration="0" state="GGgsrrrsrrGGGg"/>
+        <phase duration="3" state="GGgsrrrsrryyyy"/>
+        <phase duration="17" state="GGgsrrrGGgsrrr"/>
+
     </tlLogic>
     <tlLogic id="4" type="static" programID="0" offset="0">
-        <phase duration="29" state="srrGGGgsrrGGGg"/>
-        <phase duration="5" state="srryyygsrryyyg"/>
-        <phase duration="6" state="srrsrrGsrrsrrG"/>
-        <phase duration="5" state="srrsrrysrrsrry"/>
-        <phase duration="29" state="GGgsrrrGGgsrrr"/>
-        <phase duration="5" state="yygsrrryygsrrr"/>
-        <phase duration="6" state="srGsrrrsrGsrrr"/>
-        <phase duration="5" state="srysrrrsrysrrr"/>
+                <phase duration="20" state="GGgsrrrGGgsrrr"/>
+        <phase duration="3" state="yygsrrrGGgsrrr"/>
+        <phase duration="0" state="srrGGGgGGgsrrr"/>
+        <phase duration="3" state="GGgsrrryygsrrr"/>
+        <phase duration="47" state="srrGGGgsrrGGGg"/>
+        <phase duration="3" state="GGgyyygsrrGGGg"/>
+        <phase duration="0" state="GGgsrrrsrrGGGg"/>
+        <phase duration="3" state="GGgsrrrsrryyyy"/>
+        <phase duration="17" state="GGgsrrrGGgsrrr"/>
+
     </tlLogic>
     <tlLogic id="5" type="static" programID="0" offset="0">
-        <phase duration="29" state="srrGGGgsrrGGGg"/>
-        <phase duration="5" state="srryyygsrryyyg"/>
-        <phase duration="6" state="srrsrrGsrrsrrG"/>
-        <phase duration="5" state="srrsrrysrrsrry"/>
-        <phase duration="29" state="GGgsrrrGGgsrrr"/>
-        <phase duration="5" state="yygsrrryygsrrr"/>
-        <phase duration="6" state="srGsrrrsrGsrrr"/>
-        <phase duration="5" state="srysrrrsrysrrr"/>
+                <phase duration="20" state="GGgsrrrGGgsrrr"/>
+        <phase duration="3" state="yygsrrrGGgsrrr"/>
+        <phase duration="0" state="srrGGGgGGgsrrr"/>
+        <phase duration="3" state="GGgsrrryygsrrr"/>
+        <phase duration="47" state="srrGGGgsrrGGGg"/>
+        <phase duration="3" state="GGgyyygsrrGGGg"/>
+        <phase duration="0" state="GGgsrrrsrrGGGg"/>
+        <phase duration="3" state="GGgsrrrsrryyyy"/>
+        <phase duration="17" state="GGgsrrrGGgsrrr"/>
+
     </tlLogic>
     <tlLogic id="6" type="static" programID="0" offset="0">
-        <phase duration="29" state="srrGGGgsrrGGGg"/>
-        <phase duration="5" state="srryyygsrryyyg"/>
-        <phase duration="6" state="srrsrrGsrrsrrG"/>
-        <phase duration="5" state="srrsrrysrrsrry"/>
-        <phase duration="29" state="GGgsrrrGGgsrrr"/>
-        <phase duration="5" state="yygsrrryygsrrr"/>
-        <phase duration="6" state="srGsrrrsrGsrrr"/>
-        <phase duration="5" state="srysrrrsrysrrr"/>
+                <phase duration="20" state="GGgsrrrGGgsrrr"/>
+        <phase duration="3" state="yygsrrrGGgsrrr"/>
+        <phase duration="0" state="srrGGGgGGgsrrr"/>
+        <phase duration="3" state="GGgsrrryygsrrr"/>
+        <phase duration="47" state="srrGGGgsrrGGGg"/>
+        <phase duration="3" state="GGgyyygsrrGGGg"/>
+        <phase duration="0" state="GGgsrrrsrrGGGg"/>
+        <phase duration="3" state="GGgsrrrsrryyyy"/>
+        <phase duration="17" state="GGgsrrrGGgsrrr"/>
+
     </tlLogic>
     <tlLogic id="7" type="static" programID="0" offset="0">
-        <phase duration="29" state="srrGGGgsrrGGGg"/>
-        <phase duration="5" state="srryyygsrryyyg"/>
-        <phase duration="6" state="srrsrrGsrrsrrG"/>
-        <phase duration="5" state="srrsrrysrrsrry"/>
-        <phase duration="29" state="GGgsrrrGGgsrrr"/>
-        <phase duration="5" state="yygsrrryygsrrr"/>
-        <phase duration="6" state="srGsrrrsrGsrrr"/>
-        <phase duration="5" state="srysrrrsrysrrr"/>
+                <phase duration="20" state="GGgsrrrGGgsrrr"/>
+        <phase duration="3" state="yygsrrrGGgsrrr"/>
+        <phase duration="0" state="srrGGGgGGgsrrr"/>
+        <phase duration="3" state="GGgsrrryygsrrr"/>
+        <phase duration="47" state="srrGGGgsrrGGGg"/>
+        <phase duration="3" state="GGgyyygsrrGGGg"/>
+        <phase duration="0" state="GGgsrrrsrrGGGg"/>
+        <phase duration="3" state="GGgsrrrsrryyyy"/>
+        <phase duration="17" state="GGgsrrrGGgsrrr"/>
+
     </tlLogic>
 
     <junction id="0" type="traffic_light_right_on_red" x="400.00" y="200.00" incLanes="m1i_0 m1i_1 A10_0 A10_1 A10_2 m9i_0 m9i_1 A80_0 A80_1 A80_2" intLanes=":0_0_0 :0_1_0 :0_14_0 :0_3_0 :0_4_0 :0_4_1 :0_15_0 :0_7_0 :0_8_0 :0_16_0 :0_10_0 :0_11_0 :0_11_1 :0_17_0" shape="393.45,211.35 406.55,211.35 408.05,209.85 408.05,190.15 406.55,188.65 393.45,188.65 391.95,190.15 391.95,209.85">

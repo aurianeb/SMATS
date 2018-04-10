@@ -6,12 +6,45 @@ Contributors:
 
 from amplpy import AMPL, Environment
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
 # AMPL path
 path = '/Users/aurianeblarre/Documents/Berkeley/ENGIN296/Projet/amplide.macosx64'
 
-def solver(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta, print_=True):
+def get_alpha(detection_times):
+    alpha = detection_times['incoming'].sum() / detection_times['incoming'].count()
+    return alpha
+
+def get_delta(theta_incoming, theta_outgoing, C):
+    return [modulo(x - y, C) for x, y in zip(theta_incoming, theta_outgoing)]
+
+def compute_delta0(delta, travel_time_incoming, travel_time_outgoing, C):
+    delta0 = [delta[0]]
+    running_sum = 0
+    n = len(delta)
+    for i in range(1, n):
+        running_sum += travel_time_incoming[i - 1] - travel_time_outgoing[i - 1]
+        delta0.append(modulo(delta[i] + running_sum, C))
+    return delta0
+
+def compute_bandwidth(w_incoming, delta0, g_i_inbound, g_i_outbound):
+    n = len(w_incoming)
+    outgoing_min = 1000000
+    for i in range(1, n):
+        for j in range(1, n):
+            outgoing_min = min(outgoing_min, w_incoming[i] + delta0[i] - (
+                w_incoming[j] + delta0[j]) + (g_i_outbound[i] + g_i_outbound[j]) / 2)
+
+    incoming_min = 1000000
+    for i in range(1, n):
+        for j in range(1, n):
+            incoming_min = min(incoming_min, w_incoming[i] + w_incoming[j] + (
+                g_i_inbound[i] + g_i_inbound[j]) / 2)
+
+    return incoming_min + outgoing_min
+
+def solver(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta, verbose=True):
     """
     Solves the linear problem for the given set of parameters
     :param alpha:
@@ -52,39 +85,65 @@ def solver(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta, print_=T
     # Display the variables
     b_incoming = ampl.getVariable('b_incoming').value()
     b_outgoing = ampl.getVariable('b_outgoing').value()
-    w_relative = ampl.getVariable('w').getValues()
-    w_relative = [w[1] for w in w_relative]
+    wl = ampl.getVariable('w').getValues()
 
-    if print_ == True:
+    if verbose == True:
         print("New objective value: {}".format(bandwidth))
         print("Incoming bandwidth: {}".format(b_incoming))
         print("Outgoing bandwidth: {}".format(b_outgoing))
-        print("Incoming offsets: {}".format(w_relative))
 
     # return bandwidths and offset values
-    return b_incoming, b_outgoing, w_relative
+    return b_incoming, b_outgoing, list(wl.toPandas()['w.val'])
 
-def convert_offsets(w_relative, delta, travel_time, C):
-    """
-    Converts relative offsets to absolute
-    :param w_relative:
-    :type w_relative:
-    :param delta:
-    :type delta:
-    :param travel_time:
-    :type travel_time:
-    :param theta_1:
-    :type theta_1:
-    :return:
-    :rtype:
-    """
-    theta_1 = travel_time[0] + w_relative[0]
-    theta_inbound = [theta_1]
-    for i, w in enumerate(w_relative[1:]):
-        t = modulo(theta_1 + w - w_relative[0] + np.sum(travel_time[i:]), C)
-        theta_inbound.append(t)
-    theta_outbound = [modulo(x + y, C) for x, y in zip(theta_inbound, delta)]
-    return theta_inbound, theta_outbound
+
+def solve_pulse(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta, travel_time_incoming, travel_time_outgoing, verbose=True):
+    delta0 = compute_delta0(delta, travel_time_incoming, travel_time_outgoing, C)
+
+    gA = max(min(g_i_inbound), min(g_i_outbound))
+    if verbose == True:
+        print("Original bandwidth: {}".format(gA))
+
+    b_incoming, b_outgoing, wL = solver(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta, verbose=verbose)
+    new_bandwidth = compute_bandwidth(wL, delta0, g_i_inbound, g_i_outbound)
+    if verbose == True:
+        print("New bandwidth: {}".format(new_bandwidth))
+
+    n = len(delta)
+    if new_bandwidth > gA:
+        if verbose == True:
+            print("Bandwidth improved, updating the offsets")
+        wN = wL
+    else:
+        if min(g_i_inbound) > min(g_i_outbound):
+            if verbose == True:
+                print("Bandwidth not improved, sychronizing offsets with incoming traffic")
+            wN = [0 for i in range(n)]
+        else:
+            if verbose == True:
+                print("Bandwidth not improved, sychronizing offsets with outgoing traffic")
+            wN = delta
+
+    w_outgoing = []
+    for i in range(n):
+        w_outgoing.append(wN[i] - (delta0[0] - delta0[i]))
+
+    n = len(wL)
+    theta_incoming = [0]
+    theta_outgoing = [delta[0]]
+
+    theta1 = theta_incoming[0]
+    running_sum = 0
+    for i in range(1, n):
+        running_sum += travel_time_incoming[i - 1]
+        theta_incoming = modulo(theta1 + wN[i] + running_sum, C)
+
+    theta1 = theta_outgoing[0]
+    running_sum = 0
+    for i in range(1, n):
+        running_sum += travel_time_outgoing[i - 1]
+        theta_incoming = modulo(theta1 + w_outgoing[i] + running_sum, C)
+    return theta_incoming, theta_outgoing
+
 
 def generate_arterial(n_intersections):
     """
@@ -241,18 +300,21 @@ def test_n_intersections(n_intersections_max=15, alpha=0.4, C=70):
     plt.close()
 
 if __name__ == '__main__':
-    # Parameters
-    kwargs = {
-        'alpha': 0.4, # inbound weight
-        'n_intersections': 3,
-        'C': 70, # seconds
-        'g_i_inbound': [0.5 * 70, 0.4 * 70, 0.5 * 70], # portion of cycle
-        'g_i_outbound': [0.7 * 70, 0.6 * 70, 0.4 * 70], # portion of cycle
-        'delta': [0.5 * 70, 0.2 * 70, 0.1 * 70]
-    }
+    # Network Parameters
+    # C, n_intersections, g_i_inbound, g_i_outbound, theta_incoming, theta_outgoing
+    C = 70
+    n_intersections = 2
+    g_i_inbound = [0.5 * 70, 0.4 * 70]
+    g_i_outbound = [0.7 * 70, 0.6 * 70]
+    theta_incoming = [0, 0]
+    theta_outgoing = [0, 0]
+
+    detection_times = pd.read_csv('detection_times.csv')
+    alpha = get_alpha(detection_times)
+    delta = get_delta(theta_incoming, theta_outgoing, C)
 
     # Solve the problem with kwargs arguments
-    solver(**kwargs)
+    solver(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta)
 
     # Run test function of alpha
     test_alpha()

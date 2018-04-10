@@ -80,6 +80,13 @@ def sensor_detections(sumo_output, sensors_x, sensors_y, sensors_rad, perc=0.2):
             'timestep_time'].mean() #min
 
     detection_times['vehicle_id'] = detection_times.index
+
+    detection_times['detected_by'] = detection_times.apply(
+        lambda row: [k for k in range(nb_sensors) if (row['detected_sensor_{}'.format(k)] > 0)], axis=1)
+    detection_times['nb_detections'] = detection_times['detected_by'].apply(lambda x: len(x))
+    detection_times = detection_times[detection_times['nb_detections'] > 1]
+    detection_times['incoming'] = detection_times.apply(lambda x: x['detected_sensor_{}'.format(x['detected_by'][0])] < x[
+        'detected_sensor_{}'.format(x['detected_by'][-1])], axis=1)
     return detection_times
 
 
@@ -91,29 +98,29 @@ def distances(sensors_x, sensors_y):
 
 
 def travel_times(detection_times, sensors_x, sensors_y):
-    nb_sensors = detection_times.shape[1] - 1
+    nb_sensors = detection_times.shape[1] - 2
     sensors = list(detection_times.columns)
     sensors.remove('vehicle_id')
     travel_times_inbound = []
     travel_times_outbound = []
-    sensor_distances = distances(sensors_x, sensors_y)
-    for i in range(nb_sensors - 1):
-        tmp = detection_times[detection_times[sensors[i]].notnull()][detection_times[sensors[i + 1]].notnull()]
-        delta = tmp[sensors[i + 1]] - tmp[sensors[i]]
-        travel_times_inbound.append(delta[delta > 0].mean())
-        travel_times_outbound.append(delta[delta > 0].mean())
+    for i in range(nb_sensors):
+        tmp = detection_times[detection_times['incoming']][detection_times['detected_by'].apply(lambda x: i in x and i + 1 in x)]
+        travel_times_inbound.append((tmp[sensors[i + 1]] - tmp[sensors[i]]).mean())
+
+        tmp = detection_times[~ detection_times['incoming']][detection_times['detected_by'].apply(lambda x: i in x and i + 1 in x)]
+        travel_times_outbound.append((tmp[sensors[i]] - tmp[sensors[i + 1]]).mean())
+
     return travel_times_inbound, travel_times_outbound
 
 
 if __name__ == '__main__':
     sumo_output = pd.read_csv("quickstartod1.csv", sep=",")
-    nb_sensors = 2
-    sensors_x = [406.55, 393.45]
-    sensors_y = [190.00, 210.00]
-    sensors_rad = [200.00, 200.00]
-    intersections = [-600 + 200 * k for k in range(8)]
+    nb_sensors = 8
+    sensors_x = [200 * k for k in range(8)]
+    sensors_y = [0 for k in range(8)]
+    sensors_rad = [100.0 for k in range(8)]
 
-    detection_times = sensor_detections(sumo_output, sensors_x, sensors_y, sensors_rad, perc=0.2)
-    detection_times.to_csv("detection_times.csv", index=False)
+    dt = sensor_detections(sumo_output, sensors_x, sensors_y, sensors_rad, perc=0.2)
+    dt.to_csv("detection_times.csv", index=False)
 
-    travel_times(detection_times, sensors_x, sensors_y)
+    # travel_times(dt, sensors_x, sensors_y)
