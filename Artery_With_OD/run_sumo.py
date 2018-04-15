@@ -88,7 +88,6 @@ def modify_offsets(thetas_incoming, thetas_outgoing, gis_incoming, gis_outgoing,
         network = match.group(1) + replacement + match.group(2)
         id += 1
 
-    # print(network)
     file_handle = open(network_path, "w")
     file_handle.write(network)
     file_handle.close()

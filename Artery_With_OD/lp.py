@@ -17,7 +17,7 @@ def get_alpha(detection_times):
     return alpha
 
 def get_delta(theta_incoming, theta_outgoing, C):
-    return [modulo(x - y, C) for x, y in zip(theta_incoming, theta_outgoing)]
+    return [modulo(y - x, C) for x, y in zip(theta_incoming, theta_outgoing)]
 
 def compute_delta0(delta, travel_time_incoming, travel_time_outgoing, C):
     delta0 = [delta[0]]
@@ -28,7 +28,7 @@ def compute_delta0(delta, travel_time_incoming, travel_time_outgoing, C):
         delta0.append(modulo(delta[i] + running_sum, C))
     return delta0
 
-def compute_bandwidth(w_incoming, delta0, g_i_inbound, g_i_outbound):
+def compute_bandwidths(w_incoming, delta0, g_i_inbound, g_i_outbound):
     n = len(w_incoming)
     outgoing_min = 1000000
     for i in range(1, n):
@@ -42,7 +42,17 @@ def compute_bandwidth(w_incoming, delta0, g_i_inbound, g_i_outbound):
             incoming_min = min(incoming_min, w_incoming[i] + w_incoming[j] + (
                 g_i_inbound[i] + g_i_inbound[j]) / 2)
 
-    return incoming_min + outgoing_min
+    return incoming_min, outgoing_min
+
+def f_l(w_incoming, delta0, g_i_inbound, g_i_outbound, alpha):
+    incoming_min, outgoing_min = compute_bandwidths(w_incoming, delta0, g_i_inbound, g_i_outbound)
+
+    return alpha * incoming_min + (1 - alpha) * outgoing_min
+
+def f_n(w_incoming, delta0, g_i_inbound, g_i_outbound, alpha):
+    incoming_min, outgoing_min = compute_bandwidths(w_incoming, delta0, g_i_inbound, g_i_outbound)
+
+    return alpha * max(0, incoming_min) + (1 - alpha) * max(0, outgoing_min)
 
 def solver(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta, verbose=True):
     """
@@ -96,19 +106,28 @@ def solver(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta, verbose=
     return b_incoming, b_outgoing, list(wl.toPandas()['w.val'])
 
 
-def solve_pulse(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta, travel_time_incoming, travel_time_outgoing, verbose=True):
+def solve_pulse(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta, travel_time_incoming,
+                travel_time_outgoing, verbose=True, test=False):
     delta0 = compute_delta0(delta, travel_time_incoming, travel_time_outgoing, C)
-
     gA = max(min(g_i_inbound), min(g_i_outbound))
+
     if verbose == True:
         print("Original bandwidth: {}".format(gA))
 
-    b_incoming, b_outgoing, wL = solver(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta, verbose=verbose)
-    new_bandwidth = compute_bandwidth(wL, delta0, g_i_inbound, g_i_outbound)
+    b_incoming, b_outgoing, wL = solver(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta0, verbose=verbose)
+
+    if test == True:
+        # f_l is the same as LP objective function
+        assert b_incoming, b_outgoing == compute_bandwidths(wL, delta0, g_i_inbound, g_i_outbound)
+        test_lp(wL, delta0, g_i_inbound, g_i_outbound, alpha, C, n_tests=1000)
+
+    new_bandwidth = f_l(wL, delta0, g_i_inbound, g_i_outbound, alpha)
+
     if verbose == True:
         print("New bandwidth: {}".format(new_bandwidth))
 
     n = len(delta)
+
     if new_bandwidth > gA:
         if verbose == True:
             print("Bandwidth improved, updating the offsets")
@@ -123,9 +142,15 @@ def solve_pulse(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta, tra
                 print("Bandwidth not improved, sychronizing offsets with outgoing traffic")
             wN = delta
 
+    if test == True:
+        test_offsets(wN, delta0, g_i_inbound, g_i_outbound, alpha, C, n_tests=1000)
+
     w_outgoing = []
     for i in range(n):
         w_outgoing.append(wN[i] - (delta0[0] - delta0[i]))
+
+    if test == True:
+        test_offset_internal_relation(delta0, wN, w_outgoing)
 
     n = len(wL)
     theta_incoming = [0]
@@ -133,16 +158,48 @@ def solve_pulse(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta, tra
 
     theta1 = theta_incoming[0]
     running_sum = 0
+
     for i in range(1, n):
         running_sum += travel_time_incoming[i - 1]
         theta_incoming = modulo(theta1 + wN[i] + running_sum, C)
 
     theta1 = theta_outgoing[0]
     running_sum = 0
+
     for i in range(1, n):
         running_sum += travel_time_outgoing[i - 1]
         theta_incoming = modulo(theta1 + w_outgoing[i] + running_sum, C)
     return theta_incoming, theta_outgoing
+
+def test_offset_internal_relation(delta0, w_incoming, w_outgoing):
+    n = len(delta0)
+    for i in range(n):
+        assert w_incoming[i] - w_outgoing[i] == delta0[0] - delta0[i], """Internal offset relation not respected at index {}""".format(i)
+
+def test_lp(w_incoming, delta0, g_i_inbound, g_i_outbound, alpha, C, n_tests=1000):
+    optimal_bandwidth = f_l(w_incoming, delta0, g_i_inbound, g_i_outbound, alpha)
+    n = len(w_incoming)
+    for it in range(n_tests):
+        random_offsets = C * np.random.rand(n) - C / 2
+        random_bandwidth = f_l(random_offsets, delta0, g_i_inbound, g_i_outbound, alpha)
+        assert random_bandwidth <= optimal_bandwidth, """\n 
+        Found better offsets for (L) after {} iterations: {} \n
+        Optimal offsets: {} \n
+        Optimal bandwidth: {} \n
+        New random bandwidth: {}""".format(it, random_offsets, w_incoming, optimal_bandwidth, random_bandwidth)
+
+
+def test_offsets(w_incoming, delta0, g_i_inbound, g_i_outbound, alpha, C, n_tests=1000):
+    optimal_bandwidth = f_n(w_incoming, delta0, g_i_inbound, g_i_outbound, alpha)
+    n = len(w_incoming)
+    for it in range(n_tests):
+        random_offsets = C * np.random.rand(n) - C / 2
+        random_bandwidth = f_n(random_offsets, delta0, g_i_inbound, g_i_outbound, alpha)
+        assert random_bandwidth <= optimal_bandwidth, """\n 
+        Found better offsets for (N) after {} iterations: {} \n
+        Optimal offsets: {} \n
+        Optimal bandwidth: {} \n
+        New random bandwidth: {}""".format(it, random_offsets, w_incoming, optimal_bandwidth, random_bandwidth)
 
 
 def generate_arterial(n_intersections):

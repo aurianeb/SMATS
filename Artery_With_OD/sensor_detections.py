@@ -98,12 +98,11 @@ def distances(sensors_x, sensors_y):
 
 
 def travel_times(detection_times, sensors_x, sensors_y):
-    nb_sensors = detection_times.shape[1] - 2
-    sensors = list(detection_times.columns)
-    sensors.remove('vehicle_id')
+    sensors = [x for x in detection_times.columns if 'detected_sensor' in x]
+    nb_sensors = len(sensors)
     travel_times_inbound = []
     travel_times_outbound = []
-    for i in range(nb_sensors):
+    for i in range(nb_sensors - 1):
         tmp = detection_times[detection_times['incoming']][detection_times['detected_by'].apply(lambda x: i in x and i + 1 in x)]
         travel_times_inbound.append((tmp[sensors[i + 1]] - tmp[sensors[i]]).mean())
 
