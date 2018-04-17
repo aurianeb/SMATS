@@ -26,6 +26,7 @@ def compute_delta0(delta, travel_time_incoming, travel_time_outgoing, C):
     for i in range(1, n):
         running_sum += travel_time_incoming[i - 1] - travel_time_outgoing[i - 1]
         delta0.append(modulo(delta[i] + running_sum, C))
+
     return delta0
 
 def compute_bandwidths(w_incoming, delta0, g_i_inbound, g_i_outbound):
@@ -88,6 +89,14 @@ def solver(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta, verbose=
     ampl.param['g_outgoing'] = g_i_outbound
     ampl.param['delta'] = delta
 
+    if verbose == True:
+        print("alpha: {}".format(alpha))
+        print("N: {}".format(n_intersections))
+        print("C: {}".format(C))
+        print("g_incoming: {}".format(g_i_inbound))
+        print("g_outgoing: {}".format(g_i_outbound))
+        print("delta: {}".format(delta))
+
     # Resolve and display objective
     ampl.solve()
     bandwidth = ampl.getObjective('bandwidth').value()
@@ -99,6 +108,7 @@ def solver(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta, verbose=
 
     if verbose == True:
         print("New objective value: {}".format(bandwidth))
+        print("New offsets: {}".format(list(wl.toPandas()['w.val'])))
         print("Incoming bandwidth: {}".format(b_incoming))
         print("Outgoing bandwidth: {}".format(b_outgoing))
 
@@ -115,6 +125,7 @@ def solve_pulse(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta, tra
         print("Original bandwidth: {}".format(gA))
 
     b_incoming, b_outgoing, wL = solver(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta0, verbose=verbose)
+    # Evaluate wL in constraints set
 
     if test == True:
         # f_l is the same as LP objective function
@@ -128,7 +139,7 @@ def solve_pulse(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta, tra
 
     n = len(delta)
 
-    if new_bandwidth > gA:
+    if new_bandwidth >= gA:
         if verbose == True:
             print("Bandwidth improved, updating the offsets")
         wN = wL
@@ -179,6 +190,7 @@ def test_offset_internal_relation(delta0, w_incoming, w_outgoing):
 def test_lp(w_incoming, delta0, g_i_inbound, g_i_outbound, alpha, C, n_tests=1000):
     optimal_bandwidth = f_l(w_incoming, delta0, g_i_inbound, g_i_outbound, alpha)
     n = len(w_incoming)
+    # Separate b incoming and outgoing
     for it in range(n_tests):
         random_offsets = C * np.random.rand(n) - C / 2
         random_bandwidth = f_l(random_offsets, delta0, g_i_inbound, g_i_outbound, alpha)

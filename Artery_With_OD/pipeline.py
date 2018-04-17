@@ -53,6 +53,19 @@ def optimize(sumo_output, sensors_x, sensors_y, sensors_rad, C, n_intersections,
     print(travel_time_outgoing)
 
     # Solve the problem with kwargs arguments
+    if test == True:
+        alpha_test = 0.5
+        n_intersections_test = 9
+        C_test = 100
+        g_i_inbound_test = [0.7, 0.65, 0.50, 0.51, 0.6, 0.67, 0.4, 0.4, 0.7]
+        g_i_outbound_test = [0.7, 0.65, 0.50, 0.51, 0.6, 0.67, 0.4, 0.4, 0.7]
+        delta_test = [0 for i in range(n_intersections_test)]
+        travel_time_incoming_test = [23.7 / 371, 23.7 / 371, 23.7 / 390, 23.7 / 276, 23.7 / 472, 23.7 / 364, 23.7 / 968, 23.7 / 377]
+        travel_time_outgoing_test = [23.7 / 371, 23.7 / 371, 23.7 / 390, 23.7 / 276, 23.7 / 472, 23.7 / 364, 23.7 / 968, 23.7 / 377]
+        solve_pulse(alpha_test, n_intersections_test, C_test, g_i_inbound_test, g_i_outbound_test, delta_test,
+                    travel_time_incoming_test, travel_time_outgoing_test, verbose=verbose,
+                    test=test)
+
     theta_inbound, theta_outbound = solve_pulse(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta,
                                                 travel_time_incoming, travel_time_outgoing, verbose=verbose,
                                                 test=test)
