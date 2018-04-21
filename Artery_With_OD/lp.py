@@ -191,27 +191,74 @@ def test_lp(w_incoming, delta0, g_i_inbound, g_i_outbound, alpha, C, n_tests=100
     optimal_bandwidth = f_l(w_incoming, delta0, g_i_inbound, g_i_outbound, alpha)
     n = len(w_incoming)
     # Separate b incoming and outgoing
-    for it in range(n_tests):
+    it = 0
+    while it < n_tests:
         random_offsets = C * np.random.rand(n) - C / 2
-        random_bandwidth = f_l(random_offsets, delta0, g_i_inbound, g_i_outbound, alpha)
-        assert random_bandwidth <= optimal_bandwidth, """\n 
-        Found better offsets for (L) after {} iterations: {} \n
-        Optimal offsets: {} \n
-        Optimal bandwidth: {} \n
-        New random bandwidth: {}""".format(it, random_offsets, w_incoming, optimal_bandwidth, random_bandwidth)
+        is_feasible = of_filter(random_offsets, delta0, g_i_inbound, g_i_outbound, alpha)
+        if not is_feasible:
+            continue
+        else:
+            it += 1
+            random_bandwidth = f_l(random_offsets, delta0, g_i_inbound, g_i_outbound, alpha)
+            assert random_bandwidth <= optimal_bandwidth, """\n 
+            Found better offsets for (L) after {} iterations: {} \n
+            Optimal offsets: {} \n
+            Optimal bandwidth: {} \n
+            New random bandwidth: {}""".format(it, random_offsets, w_incoming, optimal_bandwidth, random_bandwidth)
 
 
 def test_offsets(w_incoming, delta0, g_i_inbound, g_i_outbound, alpha, C, n_tests=1000):
     optimal_bandwidth = f_n(w_incoming, delta0, g_i_inbound, g_i_outbound, alpha)
     n = len(w_incoming)
-    for it in range(n_tests):
+    it = 0
+    while it < n_tests:
         random_offsets = C * np.random.rand(n) - C / 2
-        random_bandwidth = f_n(random_offsets, delta0, g_i_inbound, g_i_outbound, alpha)
-        assert random_bandwidth <= optimal_bandwidth, """\n 
-        Found better offsets for (N) after {} iterations: {} \n
-        Optimal offsets: {} \n
-        Optimal bandwidth: {} \n
-        New random bandwidth: {}""".format(it, random_offsets, w_incoming, optimal_bandwidth, random_bandwidth)
+        is_feasible = of_filter(random_offsets, delta0, g_i_inbound, g_i_outbound, alpha)
+        if not is_feasible:
+            continue
+        else:
+            it += 1
+            random_bandwidth = f_n(random_offsets, delta0, g_i_inbound, g_i_outbound, alpha)
+            assert random_bandwidth <= optimal_bandwidth, """\n 
+            Found better offsets for (N) after {} iterations: {} \n
+            Optimal offsets: {} \n
+            Optimal bandwidth: {} \n
+            New random bandwidth: {}""".format(it, random_offsets, w_incoming, optimal_bandwidth, random_bandwidth)
+
+
+def of_filter(offsets, delta0, g_i_inbound, g_i_outbound, alpha):
+    """
+    Check whether the offset is in feasible area
+    """
+    b_incoming, b_outgoing = compute_bandwidths(offsets, delta0, g_i_inbound, g_i_outbound)
+    N = len(offsets)
+    for i in range(N):
+        if (b_incoming > g_i_inbound[i] or b_outgoing > g_i_outbound[i]):
+            return False
+
+
+    for i in range(1, N):
+        for j in range(1, N):
+            if (i != j and b_incoming + offsets[i] - offsets[j] > (g_i_inbound[i] + g_i_inbound[j]) / 2):
+                return False
+            if (i != j and b_incoming - offsets[i] + offsets[j] > (g_i_inbound[i] + g_i_inbound[j]) / 2):
+                return False
+            if (i != j and b_outgoing + offsets[i] - offsets[j] > (g_i_outbound[i] + g_i_inbound[j]) / 2 - (delta0[i] - delta0[j])):
+                return False
+            if (i != j and b_outgoing - offsets[i] + offsets[j] > (g_i_outbound[i] + g_i_inbound[j]) / 2 + (delta0[i] - delta0[j])):
+                return False
+
+        if b_incoming + offsets[i] > (g_i_inbound[0] + g_i_inbound[i]) / 2:
+            return False
+        if b_incoming - offsets[i] > (g_i_inbound[0] + g_i_inbound[i]) / 2:
+            return False
+        if b_outgoing + offsets[i] > (g_i_outbound[0] + g_i_outbound[i]) / 2 - (delta0[i] - delta0[1]):
+            return False
+        if b_outgoing - offsets[i] > (g_i_outbound[0] + g_i_outbound[i]) / 2 + (delta0[i] - delta0[1]):
+            return False
+
+    return True
+
 
 def modulo(t, C):
     """
