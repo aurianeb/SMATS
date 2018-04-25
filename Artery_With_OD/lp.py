@@ -124,6 +124,7 @@ def solve_pulse(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta, tra
     if verbose == True:
         print("Original bandwidth: {}".format(gA))
 
+    alpha = 0.5
     b_incoming, b_outgoing, wL = solver(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta0, verbose=verbose)
     # Evaluate wL in constraints set
 
@@ -172,14 +173,14 @@ def solve_pulse(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta, tra
 
     for i in range(1, n):
         running_sum += travel_time_incoming[i - 1]
-        theta_incoming = modulo(theta1 + wN[i] + running_sum, C)
+        theta_incoming.append(modulo(theta1 + wN[i] + running_sum, C))
 
     theta1 = theta_outgoing[0]
     running_sum = 0
 
     for i in range(1, n):
         running_sum += travel_time_outgoing[i - 1]
-        theta_incoming = modulo(theta1 + w_outgoing[i] + running_sum, C)
+        theta_outgoing.append(modulo(theta1 + w_outgoing[i] + running_sum, C))
     return theta_incoming, theta_outgoing
 
 def test_offset_internal_relation(delta0, w_incoming, w_outgoing):

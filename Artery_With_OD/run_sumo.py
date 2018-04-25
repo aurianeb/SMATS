@@ -79,7 +79,7 @@ def modify_offsets(thetas_incoming, thetas_outgoing, gis_incoming, gis_outgoing,
     file.close()
 
     id = 0
-    for theta_incoming, theta_outgoing, gi_incoming, gi_outgoing, in zip(thetas_incoming, thetas_outgoing, gis_incoming, gis_outgoing):
+    for theta_incoming, theta_outgoing, gi_incoming, gi_outgoing in zip(thetas_incoming, thetas_outgoing, gis_incoming, gis_outgoing):
         replacement = modify_offset(theta_incoming, theta_outgoing, gi_incoming, gi_outgoing, C, trans_time=trans_time)
 
         start = """<tlLogic id="{}" type="static" programID="0" offset="0">\n""".format(id)

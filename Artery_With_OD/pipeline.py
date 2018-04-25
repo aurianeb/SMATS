@@ -7,6 +7,7 @@ import pandas as pd
 from sensor_detections import sensor_detections, travel_times
 from lp import get_alpha, get_delta, solve_pulse
 from run_sumo import modify_offsets
+from shutil import copyfile
 
 def performance_metrics(detection_times):
 
@@ -36,11 +37,12 @@ def performance_metrics(detection_times):
 
 
 def optimize(sumo_output, sensors_x, sensors_y, sensors_rad, C, n_intersections, \
-             g_i_inbound, g_i_outbound, theta_incoming, theta_outgoing, verbose=True, test=False):
+             g_i_inbound, g_i_outbound, theta_incoming, theta_outgoing, network_path, \
+             verbose=True, test=False, display_results=False):
     detection_times = sensor_detections(sumo_output, sensors_x, sensors_y, sensors_rad, perc=0.4)
-    if verbose == True:
+    if display_results == True:
         print("Before optimization")
-        # performance_metrics(detection_times)
+        performance_metrics(detection_times)
 
     alpha = get_alpha(detection_times)
     if verbose == True:
@@ -49,22 +51,6 @@ def optimize(sumo_output, sensors_x, sensors_y, sensors_rad, C, n_intersections,
     if verbose == True:
         print("Delta: {}".format(delta))
     travel_time_incoming, travel_time_outgoing = travel_times(detection_times, sensors_x, sensors_y)
-    print(travel_time_incoming)
-    print(travel_time_outgoing)
-
-    # Solve the problem with kwargs arguments
-    if test == True:
-        alpha_test = 0.5
-        n_intersections_test = 9
-        C_test = 100
-        g_i_inbound_test = [0.7, 0.65, 0.50, 0.51, 0.6, 0.67, 0.4, 0.4, 0.7]
-        g_i_outbound_test = [0.7, 0.65, 0.50, 0.51, 0.6, 0.67, 0.4, 0.4, 0.7]
-        delta_test = [0 for i in range(n_intersections_test)]
-        travel_time_incoming_test = [23.7 / 371, 23.7 / 371, 23.7 / 390, 23.7 / 276, 23.7 / 472, 23.7 / 364, 23.7 / 968, 23.7 / 377]
-        travel_time_outgoing_test = [23.7 / 371, 23.7 / 371, 23.7 / 390, 23.7 / 276, 23.7 / 472, 23.7 / 364, 23.7 / 968, 23.7 / 377]
-        solve_pulse(alpha_test, n_intersections_test, C_test, g_i_inbound_test, g_i_outbound_test, delta_test,
-                    travel_time_incoming_test, travel_time_outgoing_test, verbose=verbose,
-                    test=test)
 
     theta_inbound, theta_outbound = solve_pulse(alpha, n_intersections, C, g_i_inbound, g_i_outbound, delta,
                                                 travel_time_incoming, travel_time_outgoing, verbose=verbose,
@@ -72,18 +58,11 @@ def optimize(sumo_output, sensors_x, sensors_y, sensors_rad, C, n_intersections,
 
     # Run new offsets into SUMO
     modify_offsets(theta_inbound, theta_outbound, g_i_inbound, g_i_outbound, C, trans_time=3,
-                   network_path="quickstart.net.xml")
+                   network_path=network_path)
     return theta_inbound, theta_outbound
 
-
-if __name__ == '__main__':
-    sumo_output = pd.read_csv("quickstartod1.csv", sep=",")
-
-    # Sensor data
-    # RATE OF ACQUIREMENT
-    # Width 3 lanes 10
-    # Width perpendicular lane 6.5
-    n_intersections = 8
+def pipeline_testing():
+    n_intersections = 4
     n_sensors = n_intersections
     sensors_x = [400 + 200 * k + 7 for k in range(n_sensors)]
     sensors_y = [200 - 10 for k in range(n_sensors)]
@@ -96,5 +75,42 @@ if __name__ == '__main__':
     theta_incoming = [0 for k in range(n_intersections)]
     theta_outgoing = [0 for k in range(n_intersections)]
 
-    theta_inbound, theta_outbound = optimize(sumo_output, sensors_x, sensors_y, sensors_rad, C, n_intersections, \
-             g_i_inbound, g_i_outbound, theta_incoming, theta_outgoing, verbose=True, test=True)
+    for tmp in range(10):
+        g_i_inbound = [0 + 5 * tmp for k in range(n_intersections)]
+        g_i_outbound = [0 + 5 * tmp for k in range(n_intersections)]
+
+        theta_inbound, theta_outbound = optimize(sumo_output, sensors_x, sensors_y, sensors_rad, C, n_intersections, \
+                                                 g_i_inbound, g_i_outbound, theta_incoming, theta_outgoing, mynetwork_path,
+                                                 verbose=True, test=False)
+
+        print(tmp, theta_inbound, theta_outbound)
+        print()
+
+
+if __name__ == '__main__':
+    sumo_output = pd.read_csv("quickstartod1.csv", sep=",")
+    network_path = "quickstart.net.xml"
+    mynetwork_path = "optimized.net.xml"
+
+    copyfile(network_path, mynetwork_path)
+
+    # Sensor data
+    # RATE OF ACQUIREMENT
+    # Width 3 lanes 10
+    # Width perpendicular lane 6.5
+    # n_intersections = 8
+    # n_sensors = n_intersections
+    # sensors_x = [400 + 200 * k + 7 for k in range(n_sensors)]
+    # sensors_y = [200 - 10 for k in range(n_sensors)]
+    # sensors_rad = [10.0 for k in range(n_sensors)]
+    #
+    # # Network data
+    # C = 90
+    # g_i_inbound = [29 for k in range(n_intersections)]
+    # g_i_outbound = [29 for k in range(n_intersections)]
+    # theta_incoming = [0 for k in range(n_intersections)]
+    # theta_outgoing = [0 for k in range(n_intersections)]
+    #
+    # theta_inbound, theta_outbound = optimize(sumo_output, sensors_x, sensors_y, sensors_rad, C, n_intersections, \
+    #          g_i_inbound, g_i_outbound, theta_incoming, theta_outgoing, mynetwork_path, verbose=True, test=True)
+    pipeline_testing()

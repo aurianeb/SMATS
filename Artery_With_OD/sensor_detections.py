@@ -109,6 +109,14 @@ def travel_times(detection_times, sensors_x, sensors_y):
         tmp = detection_times[~ detection_times['incoming']][detection_times['detected_by'].apply(lambda x: i in x and i + 1 in x)]
         travel_times_outbound.append((tmp[sensors[i]] - tmp[sensors[i + 1]]).mean())
 
+    travel_times_inbound_mean = np.nanmean(travel_times_inbound)
+    travel_times_outbound_mean = np.nanmean(travel_times_outbound)
+    travel_times_inbound = [x if x == x else travel_times_inbound_mean for x in travel_times_inbound]
+    travel_times_outbound = [x if x == x else travel_times_outbound_mean for x in travel_times_outbound]
+
+    assert np.count_nonzero(np.isnan(travel_times_inbound)) == 0, "Nan in travel_times_inbound"
+    assert np.count_nonzero(np.isnan(travel_times_outbound)) == 0, "Nan in travel_times_outbound"
+
     return travel_times_inbound, travel_times_outbound
 
 
