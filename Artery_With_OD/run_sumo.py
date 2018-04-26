@@ -7,7 +7,7 @@ import re
 
 
 def write_line(time, phase):
-    return """        <phase duration="{}" state="{}"/>\n""".format(max(0, time), phase)
+    return """        <phase duration="{}" state="{}"/>\n""".format(int(time), phase)
 
 def modify_offset(theta_incoming, theta_outgoing, gi_incoming, gi_outgoing, C, trans_time=3):
     # Transition: before light turns red from green it is yellow for 3s
@@ -17,7 +17,8 @@ def modify_offset(theta_incoming, theta_outgoing, gi_incoming, gi_outgoing, C, t
     # First Phase
     t1 = min(theta_incoming, theta_outgoing)
     phase = "GGgsrrrGGgsrrr"
-    text += write_line(t1 - t0, phase)
+    if t1 - t0 > 0:
+       text += write_line(t1 - t0, phase)
 
     # Second Phase
     t2 = max(theta_incoming, theta_outgoing)
@@ -31,8 +32,10 @@ def modify_offset(theta_incoming, theta_outgoing, gi_incoming, gi_outgoing, C, t
         # up transitions yellow
         trans_phase = "yygsrrrGGgsrrr"
         main_phase = "srrGGGgGGgsrrr"
-    text += write_line(trans_time, trans_phase)
-    text += write_line(t2 - t1 - trans_time, main_phase)
+
+    if t2 - t1 - trans_time > 0:
+        text += write_line(trans_time, trans_phase)
+        text += write_line(t2 - t1 - trans_time, main_phase)
 
     # Third Phase
     # Both are green
@@ -44,8 +47,9 @@ def modify_offset(theta_incoming, theta_outgoing, gi_incoming, gi_outgoing, C, t
         # down transitions yellow
         trans_phase = "GGgsrrryygsrrr"
     main_phase = "srrGGGgsrrGGGg"
-    text += write_line(trans_time, trans_phase)
-    text += write_line(t3 - t2 - trans_time, main_phase)
+    if t3 - t2 - trans_time > 0:
+        text += write_line(trans_time, trans_phase)
+        text += write_line(t3 - t2 - trans_time, main_phase)
 
     # Fourth Phase
     t4 = max(theta_incoming + gi_incoming, theta_outgoing + gi_outgoing)
@@ -57,8 +61,10 @@ def modify_offset(theta_incoming, theta_outgoing, gi_incoming, gi_outgoing, C, t
         # outgoing is red
         trans_phase = "GGgyyygsrrGGGg"
         main_phase = "GGgsrrrsrrGGGg"
-    text += write_line(trans_time, trans_phase)
-    text += write_line(t4 - t3 - trans_time, main_phase)
+
+    if t4 - t3 - trans_time > 0:
+        text += write_line(trans_time, trans_phase)
+        text += write_line(t4 - t3 - trans_time, main_phase)
 
     # Fifth Phase
     # Both are red
@@ -68,8 +74,10 @@ def modify_offset(theta_incoming, theta_outgoing, gi_incoming, gi_outgoing, C, t
     if t2 == theta_incoming:
         trans_phase = "GGgsrrrsrryyyy"
     main_phase = "GGgsrrrGGgsrrr"
-    text += write_line(trans_time, trans_phase)
-    text += write_line(t5 - t4 - trans_time, main_phase)
+
+    if t5 - t4 - trans_time > 0:
+        text += write_line(trans_time, trans_phase)
+        text += write_line(t5 - t4 - trans_time, main_phase)
     return text
 
 def modify_offsets(thetas_incoming, thetas_outgoing, gis_incoming, gis_outgoing, C, trans_time=3,

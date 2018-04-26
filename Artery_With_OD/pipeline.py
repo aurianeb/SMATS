@@ -61,8 +61,8 @@ def optimize(sumo_output, sensors_x, sensors_y, sensors_rad, C, n_intersections,
                    network_path=network_path)
     return theta_inbound, theta_outbound
 
-def pipeline_testing():
-    n_intersections = 4
+def pipeline_testing(mynetwork_path):
+    n_intersections = 8
     n_sensors = n_intersections
     sensors_x = [400 + 200 * k + 7 for k in range(n_sensors)]
     sensors_y = [200 - 10 for k in range(n_sensors)]
@@ -113,4 +113,4 @@ if __name__ == '__main__':
     #
     # theta_inbound, theta_outbound = optimize(sumo_output, sensors_x, sensors_y, sensors_rad, C, n_intersections, \
     #          g_i_inbound, g_i_outbound, theta_incoming, theta_outgoing, mynetwork_path, verbose=True, test=True)
-    pipeline_testing()
+    pipeline_testing(mynetwork_path)
