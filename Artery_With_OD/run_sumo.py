@@ -9,7 +9,7 @@ import re
 def write_line(time, phase):
     return """        <phase duration="{}" state="{}"/>\n""".format(int(time), phase)
 
-def modify_offset(theta_incoming, theta_outgoing, gi_incoming, gi_outgoing, C, trans_time=3):
+def modify_offset(theta_incoming, theta_outgoing, gi_incoming, gi_outgoing, C, trans_time=5):
     # Transition: before light turns red from green it is yellow for 3s
     text = """"""
     t0 = 0

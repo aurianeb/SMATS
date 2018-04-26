@@ -16,8 +16,8 @@ def build_configuration_file(input_cfg_path, output_cfg_path):
     cfg = file.read()
     file.close()
 
-    cfg.replace("""<net-file value="quickstart.net.xml"/>""", """<net-file value="optimized.net.xml"/>""")
-    cfg.replace("""<fcd-output value="quickstartod1.output.xml" />""", """<fcd-output value="optimized.output.xml" />""")
+    cfg = cfg.replace("""<net-file value="quickstart.net.xml"/>""", """<net-file value="optimized.net.xml"/>""")
+    cfg = cfg.replace("""<fcd-output value="quickstartod1.output.xml" />""", """<fcd-output value="optimized.output.xml" />""")
 
     file_handle = open(output_cfg_path, "w")
     file_handle.write(cfg)
@@ -32,6 +32,7 @@ def runner(file, stat):
     try:
         sys.path.append(os.path.dirname(
             __file__))  # tutorial in tests
+        os.environ['SUMO_HOME'] = "/Users/aurianeblarre/Documents/Berkeley/Capstone/sumo-0.30.0"
         sys.path.append(os.path.join(os.environ.get("SUMO_HOME"), "tools"))
         from sumolib import checkBinary
     except ImportError:
@@ -43,7 +44,7 @@ def runner(file, stat):
     if stat:
         com = "--duration-log.statistics"
     else:
-        com = ""
+        com = "-"
     retcode = subprocess.call(
         [sumoBinary, "-c", file, com], stdout=sys.stdout, stderr=sys.stderr)
     print(">> Simulation closed with status %s" % retcode)
@@ -51,7 +52,7 @@ def runner(file, stat):
 
 
 if __name__ == "__main__":
-    # build_configuration_file("quickstart.sumocfg", "optimized.sumocfg")
+    build_configuration_file("quickstart.sumocfg", "optimized.sumocfg")
     # os.system("sumo-gui -c optimized.sumocfg")
 
-    runner("optimized.sumocfg", False)
+    # runner("optimized.sumocfg", False)
