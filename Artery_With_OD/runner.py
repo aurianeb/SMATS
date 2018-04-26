@@ -11,13 +11,13 @@ import subprocess
 import sys
 
 
-def build_configuration_file(input_cfg_path, output_cfg_path):
+def build_configuration_file(input_cfg_path, output_cfg_path, name="optimized"):
     file = open(input_cfg_path, "r")
     cfg = file.read()
     file.close()
 
-    cfg = cfg.replace("""<net-file value="quickstart.net.xml"/>""", """<net-file value="optimized.net.xml"/>""")
-    cfg = cfg.replace("""<fcd-output value="quickstartod1.output.xml" />""", """<fcd-output value="optimized.output.xml" />""")
+    cfg = cfg.replace("""<net-file value="quickstart.net.xml"/>""", """<net-file value="{}.net.xml"/>""".format(name))
+    cfg = cfg.replace("""<fcd-output value="quickstartod1.output.xml" />""", """<fcd-output value="{}.output.xml" />""".format(name))
 
     file_handle = open(output_cfg_path, "w")
     file_handle.write(cfg)
